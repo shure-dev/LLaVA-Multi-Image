@@ -35,7 +35,7 @@ def load_image(image_file):
         response = requests.get(image_file)
         image = Image.open(BytesIO(response.content)).convert("RGB")
     else:
-        image = Image.open(image_file).convert("RGB")
+        image = Image.open("/content/LLaVA-Multi-Image/"+image_file).convert("RGB")
     return image
 
 
@@ -93,13 +93,14 @@ def eval_model(args):
     Image 10: {scene for example task 3}
     Image 11: {curent scene for example task 3}
 
-    # Breakdown this target task, following examples
+    # Decompose this target task, following examples
     Target task: Put all objects with the same texture as <image-placeholder> {object image for target task} into it in this scene <image-placeholder> {curent scene for target task}.
     
     # Examples
     ## Task1
     Original: Put the <image-placeholder> {first object image for example task 1} into the <image-placeholder> {second object image for example task 1} in this scene <image-placeholder> {curent scene for example task 1}.
-    After decomposition: Pick the R-shaped object and place it in the green container.
+    After decomposition: 
+    Pick the R-shaped object and place it in the green container.
 
     ## Task2
     Original: Stack objects in this order <image-placeholder>{first scene for example task 2} <image-placeholder>{second scene for example task 2}<image-placeholder>{third scene for example task 2} in this scene <image-placeholder> {curent scene for example task 2}.
