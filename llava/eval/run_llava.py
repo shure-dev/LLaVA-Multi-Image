@@ -77,7 +77,7 @@ def eval_model(args):
     
     qs = '''
     
-    # This is description for given images
+    # This is description for given 11 images
     Image 1: {object image for target task}
     Image 2: {curent scene for target task}
     
