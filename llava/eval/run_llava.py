@@ -56,7 +56,64 @@ def eval_model(args):
         args.model_path, args.model_base, model_name
     )
 
-    qs = args.query
+    # qs = args.query
+    image_files = [
+        "vima-images/task-14/task-14-prompt-object-01.png", # {object image for target task}
+        "vima-images/task-14/task-14-current-snence.png", # {curent scene for target task}
+        
+        "vima-images/task-01/task-01-prompt-object-01.png",  # {first object image for example task 1}
+        "vima-images/task-01/task-01-prompt-object-02.png",  # {first object image for example task 1}
+        "vima-images/task-01/task-01-context.png",  # {first object image for example task 1}
+
+        "vima-images/task-11/task-11-scene-01.png",  # {first object image for example task 1}
+        "vima-images/task-11/task-11-scene-02.png",  # {first object image for example task 1}
+        "vima-images/task-11/task-11-scene-03.png",  # {first object image for example task 1}
+        "vima-images/task-11/task-11-current-scene.png",  # {first object image for example task 1}
+
+        "vima-images/task-02/task-02-prompt-scene-01.png",  # {first object image for example task 1}
+        "vima-images/task-02/task-02-current-scene.png",  # {first object image for example task 1}
+
+        ]
+    
+    qs = '''
+    
+    # This is description for given images
+    Image 1: {object image for target task}
+    Image 2: {curent scene for target task}
+    
+    Image 3: {first object image for example task 1}
+    Image 4: {second object image for example task 1}
+    Image 5: {curent scene for example task 1}
+    
+    Image 6: {first scene for example task 2}
+    Image 7: {second scene for example task 2}
+    Image 8: {third scene for example task 2}
+    Image 9: {curent scene for example task 2}
+
+    Image 10: {scene for example task 3}
+    Image 11: {curent scene for example task 3}
+
+    # Breakdown this target task, following examples
+    Target task: Put all objects with the same texture as <image-placeholder> {object image for target task} into it in this scene <image-placeholder> {curent scene for target task}.
+    
+    # Examples
+    ## Task1
+    Original: Put the <image-placeholder> {first object image for example task 1} into the <image-placeholder> {second object image for example task 1} in this scene <image-placeholder> {curent scene for example task 1}.
+    After decomposition: Pick the R-shaped object and place it in the green container.
+
+    ## Task2
+    Original: Stack objects in this order <image-placeholder>{first scene for example task 2} <image-placeholder>{second scene for example task 2}<image-placeholder>{third scene for example task 2} in this scene <image-placeholder> {curent scene for example task 2}.
+    After decomposition:
+    Pick the green stripe & triangle object and place it in the gray & triangle object.
+    Pick the rainbow & triangle object and place it in the green stripe & triangle object.
+    
+    ## Task3
+    Original: Put the green and blue stripe object in <image-placeholder> {scene for example task 3} into the yellow paisely object in this scene <image-placeholder> {curent scene for example task 3}.
+    After decomposition:
+    Pick the green and blue stripe object and place it in the yellow paisely object.
+
+    '''
+    
     image_token_se = DEFAULT_IM_START_TOKEN + DEFAULT_IMAGE_TOKEN + DEFAULT_IM_END_TOKEN
     if IMAGE_PLACEHOLDER in qs:
         if model.config.mm_use_im_start_end:
@@ -92,8 +149,9 @@ def eval_model(args):
     conv.append_message(conv.roles[1], None)
     prompt = conv.get_prompt()
 
-    image_files = image_parser(args)
+    # image_files = image_parser(args)
     images = load_images(image_files)
+    
     images_tensor = (
         image_processor.preprocess(images, return_tensors="pt")["pixel_values"]
         .half()
